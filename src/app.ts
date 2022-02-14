@@ -1,3 +1,17 @@
+//autobind decorator
+function autobind(_: any, _2: string, descriptor: PropertyDescriptor) {
+  const originalMethod = descriptor.value; //get access to the original value
+  const adjDescriptor: PropertyDescriptor = {
+    configurable: true,
+    get() {
+      const boundFn = originalMethod.bind(this);
+      return boundFn;
+    },
+  };
+  return adjDescriptor;
+}
+
+//project input class
 // Goal - lists of projects - Active and Finished (drag and drop from one to the other)
 class ProjectInput {
   templateElement: HTMLTemplateElement; //type available become dom is added to tsconfig lib
@@ -33,6 +47,7 @@ class ProjectInput {
     this.attach();
   }
 
+  @autobind
   private submitHandler(event: Event) {
     event.preventDefault();
     console.log(this.titleInputElement.value);
@@ -40,7 +55,7 @@ class ProjectInput {
 
   private configure() {
     //   binding this inside of the makes the submit handler refer to this instead of the target when it's called
-    this.element.addEventListener("submit", this.submitHandler.bind(this));
+    this.element.addEventListener("submit", this.submitHandler);
   }
   private attach() {
     this.hostElement.insertAdjacentElement("afterbegin", this.element);
