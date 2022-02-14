@@ -3,6 +3,9 @@ class ProjectInput {
   templateElement: HTMLTemplateElement; //type available become dom is added to tsconfig lib
   hostElement: HTMLDivElement;
   element: HTMLFormElement;
+  titleInputElement: HTMLInputElement;
+  descriptionInputElement: HTMLInputElement;
+  peopleInputElement: HTMLInputElement;
 
   constructor() {
     this.templateElement = document.getElementById(
@@ -15,7 +18,29 @@ class ProjectInput {
       true
     ); //second arg is deep clone
     this.element = importedNode.firstElementChild as HTMLFormElement;
+    this.element.id = "user-input";
+
+    this.titleInputElement = this.element.querySelector(
+      "#title"
+    )! as HTMLInputElement;
+    this.descriptionInputElement = this.element.querySelector(
+      "#description"
+    )! as HTMLInputElement;
+    this.peopleInputElement = this.element.querySelector(
+      "#people"
+    )! as HTMLInputElement;
+    this.configure();
     this.attach();
+  }
+
+  private submitHandler(event: Event) {
+    event.preventDefault();
+    console.log(this.titleInputElement.value);
+  }
+
+  private configure() {
+    //   binding this inside of the makes the submit handler refer to this instead of the target when it's called
+    this.element.addEventListener("submit", this.submitHandler.bind(this));
   }
   private attach() {
     this.hostElement.insertAdjacentElement("afterbegin", this.element);
