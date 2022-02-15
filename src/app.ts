@@ -55,10 +55,44 @@ function autobind(_: any, _2: string, descriptor: PropertyDescriptor) {
   return adjDescriptor;
 }
 
+// ProjectList Class
+class ProjectList {
+  templateElement: HTMLTemplateElement; //type available because dom is added to tsconfig lib
+  hostElement: HTMLDivElement;
+  element: HTMLElement;
+
+  constructor(private type: "active" | "finished") {
+    this.templateElement = document.getElementById(
+      "project-list"
+    )! as HTMLTemplateElement; //typecast
+    this.hostElement = document.getElementById("app")! as HTMLDivElement; //typecast
+
+    const importedNode = document.importNode(
+      this.templateElement.content,
+      true
+    ); //second arg is deep clone
+    this.element = importedNode.firstElementChild as HTMLElement;
+    this.element.id = `${this.type}-projects`;
+    this.attach();
+    this.renderContent();
+  }
+
+  private renderContent() {
+    const listId = `${this.type}-projects-list`;
+    this.element.querySelector("ul")!.id = listId;
+    this.element.querySelector("h2")!.textContent =
+      this.type.toUpperCase() + " PROJECTS";
+  }
+
+  private attach() {
+    this.hostElement.insertAdjacentElement("beforeend", this.element);
+  }
+}
+
 //project input class
 // Goal - lists of projects - Active and Finished (drag and drop from one to the other)
 class ProjectInput {
-  templateElement: HTMLTemplateElement; //type available become dom is added to tsconfig lib
+  templateElement: HTMLTemplateElement; //type available because dom is added to tsconfig lib
   hostElement: HTMLDivElement;
   element: HTMLFormElement;
   titleInputElement: HTMLInputElement;
@@ -150,3 +184,5 @@ class ProjectInput {
 }
 
 const prjInput = new ProjectInput();
+const activeProject = new ProjectList("active");
+const finishedProject = new ProjectList("finished");
