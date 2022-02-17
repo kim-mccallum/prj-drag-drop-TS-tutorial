@@ -1,3 +1,19 @@
+//Drag and Drop Interfaces - set up a contract for certain classes to implement drag and drop
+interface Draggable {
+  // two event listeners and two handlers
+  dragStartHandler(event: DragEvent): void;
+  dragEndHandler(event: DragEvent): void;
+}
+
+interface DragTarget {
+  // permit the drop
+  dragOverHandler(event: DragEvent): void;
+  // handler the drop
+  dropHandler(event: DragEvent): void;
+  // provide some visual feedback to user
+  dragLeaveHandler(event: DragEvent): void;
+}
+
 //Project Type
 enum ProjectStatus {
   Active,
@@ -56,10 +72,8 @@ class ProjectState extends State<Project> {
     }
   }
 }
-
 //create an instance of this project so that you can refer to this global object anywhere SINGLETON
 const projectState = ProjectState.getInstance();
-
 // Validation
 interface Validatable {
   value: string | number;
@@ -103,7 +117,6 @@ function validate(validatableInput: Validatable) {
   }
   return isValid;
 }
-
 //autobind decorator so that you don't have to bind this when used in event handlers
 function autobind(_: any, _2: string, descriptor: PropertyDescriptor) {
   const originalMethod = descriptor.value; //get access to the original value
@@ -144,7 +157,6 @@ abstract class Component<T extends HTMLElement, U extends HTMLElement> {
     }
     this.attach(insertAtStart);
   }
-
   private attach(insertAtBeginning: boolean) {
     this.hostElement.insertAdjacentElement(
       insertAtBeginning ? "afterbegin" : "beforeend",
@@ -156,9 +168,12 @@ abstract class Component<T extends HTMLElement, U extends HTMLElement> {
 }
 
 //Project Item - responsible for rendering item
-class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> {
+class ProjectItem
+  extends Component<HTMLUListElement, HTMLLIElement>
+  implements Draggable
+{
   private project: Project;
-
+  //add getter to transform retrieved data
   get persons() {
     if (this.project.people === 1) {
       return "1 person";
@@ -166,7 +181,6 @@ class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> {
       return `${this.project.people} people`;
     }
   }
-
   constructor(hostId: string, project: Project) {
     super("single-project", hostId, false, project.id);
     this.project = project;
@@ -174,8 +188,19 @@ class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> {
     this.configure();
     this.renderContent();
   }
+  @autobind
+  dragStartHandler(event: DragEvent) {
+    console.log(event);
+  }
+  @autobind
+  dragEndHandler(_: DragEvent) {
+    console.log("DragEnd");
+  }
 
-  configure() {}
+  configure() {
+    this.element.addEventListener("dragstart", this.dragStartHandler);
+    this.element.addEventListener("dragend", this.dragEndHandler);
+  }
 
   renderContent() {
     this.element.querySelector("h2")!.textContent = this.project.title;
