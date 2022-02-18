@@ -2,6 +2,7 @@ const path = require("path");
 
 //make a NodeJS export
 module.exports = {
+  mode: "development",
   // tell it where your app starts
   entry: "./src/app.ts",
   output: {
