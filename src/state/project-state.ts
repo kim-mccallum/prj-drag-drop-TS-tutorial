@@ -1,4 +1,4 @@
-import { Project, ProjectStatus } from "../models/project.js";
+import { Project, ProjectStatus } from "../models/project";
 
 //Project state management class
 type Listener<T> = (items: T[]) => void;
@@ -54,5 +54,6 @@ export class ProjectState extends State<Project> {
     }
   }
 }
+
 //create an instance of this project so that you can refer to this global object anywhere SINGLETON
 export const projectState = ProjectState.getInstance();
