@@ -1,6 +1,9 @@
 // Component Base Class - generic class for inheritance (abstract)
 
-export abstract class Component<T extends HTMLElement, U extends HTMLElement> {
+export default abstract class Component<
+  T extends HTMLElement,
+  U extends HTMLElement
+> {
   templateElement: HTMLTemplateElement; //type available because dom is added to tsconfig lib
   hostElement: T;
   element: U;
